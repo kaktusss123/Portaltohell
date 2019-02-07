@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Portal to hell</string>
+    <string name="title_news">Новости</string>
+    <string name="title_group">Группа</string>
+    <string name="title_schedule">Расписание</string>
+    <string name="title_search">Поиск чего-то</string>
+    <string name="title_thumb">Большой палец</string>
+    <string name="prev_day"><![CDATA[<<]]></string>
+    <string name="date_example">4 февраля</string>
+    <string name="next_day"><![CDATA[>>]]></string>
+</resources>
