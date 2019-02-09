@@ -9,15 +9,28 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.ListView;
+
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     public WebInterface web;
+    BottomNavigationView navigation;
+    FragmentTransaction transaction;
+    SharedPreferences mSettings;
+    DataTransfer transfer;
 
+    Context context;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -55,22 +68,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_layout, NewsFragment.newInstance());
         transaction.commit();
 
-        SharedPreferences mSettings = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
-
-
+        mSettings = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
 
         web = new WebInterface(this);
-        DataTransfer transfer = DataTransfer.getInstance();
+        transfer = DataTransfer.getInstance();
         web.auth(mSettings.getString("login", ""), mSettings.getString("pwd", ""));
         transfer.web = web;
     }
-
 }

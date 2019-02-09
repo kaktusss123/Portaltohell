@@ -59,7 +59,7 @@ public class ScheduleFragment extends Fragment {
             public void onClick(View v) {
                 now.add(Calendar.DAY_OF_YEAR, -1);
                 selectedDate.setText(String.format("%s%s", String.valueOf(now.get(Calendar.DAY_OF_MONTH)), months[now.get(Calendar.MONTH)]));
-                web.schedule(getDate(now));
+                web.get_schedule(getDate(now));
             }
         });
         next_day.setOnClickListener(new View.OnClickListener() {
@@ -67,14 +67,14 @@ public class ScheduleFragment extends Fragment {
             public void onClick(View v) {
                 now.add(Calendar.DAY_OF_YEAR, 1);
                 selectedDate.setText(String.format("%s%s", String.valueOf(now.get(Calendar.DAY_OF_MONTH)), months[now.get(Calendar.MONTH)]));
-                web.schedule(getDate(now));
+                web.get_schedule(getDate(now));
             }
         });
 
         // TODO if not in database
         DataTransfer transfer = DataTransfer.getInstance();
         web = transfer.web;
-        web.schedule(getDate(now));
+        web.get_schedule(getDate(now));
 
         return root;
     }
