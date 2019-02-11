@@ -112,7 +112,7 @@ class WebInterface {
     }
 
     void getNews(final WebCallbacks callback) {
-        String url = "http://www.fa.ru/_layouts/15/RNS.University/AJAX.ashx?action=archivednews&page=1&count=30";
+        String url = "http://www.fa.ru/_layouts/15/RNS.University/AJAX.ashx?action=mainnews&page=1&count=10";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -122,6 +122,7 @@ class WebInterface {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(context, "Не удалось получить новости", Toast.LENGTH_LONG).show();
+                System.out.println(error);
             }
         });
         queue.add(stringRequest);
