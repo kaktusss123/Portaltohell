@@ -10,9 +10,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,9 +18,6 @@ import org.jsoup.select.Elements;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.util.ArrayList;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 
 class WebInterface {
 
@@ -82,6 +76,23 @@ class WebInterface {
         queue.add(stringRequest);
     }
 
+    void get_schedule(final ScheduleCallback callback, String date) {
+        String url = "https://portal.fa.ru/Job/SearchAjax?DateBegin=" + date + "&DateEnd=" + date + "&JobType=INDIVIDUAL&GroupId=21688";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                callback.ScheduleRequest(response, context);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, "Не удалось получить расписание", Toast.LENGTH_LONG).show();
+                System.out.println(error);
+            }
+        });
+        queue.add(stringRequest);
+    }
+
     void get_schedule(String date) {
         String url = "https://portal.fa.ru/Job/SearchAjax?DateBegin=" + date + "&DateEnd=" + date + "&JobType=INDIVIDUAL&GroupId=21688";
         final ArrayList<ArrayList<String>> scheduleOnDay = new ArrayList<>();
@@ -111,7 +122,7 @@ class WebInterface {
         queue.add(stringRequest);
     }
 
-    void getNews(final WebCallbacks callback) {
+    void getNews(final NewsCallback callback) {
         String url = "http://www.fa.ru/_layouts/15/RNS.University/AJAX.ashx?action=mainnews&page=1&count=10";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override

@@ -70,18 +70,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this;
 
+        // Инициализация нав бара
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        // Выставляю фрагмент по умолчанию
         transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_layout, NewsFragment.newInstance());
         transaction.commit();
 
+        // Обработка сохраненных данных авторизации
         mSettings = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mSettings.edit();
+        editor.putString("login", "185464");
+        editor.putString("pwd", "e7afb0d5d15adb49f214bf8698b466a5");
+        editor.apply();
+        // TODO сделать экран логина и авторизацию
 
+        // Инициализация веб-интерфейса и трансфера данных
         web = new WebInterface(this);
         transfer = DataTransfer.getInstance();
-        web.auth(mSettings.getString("login", ""), mSettings.getString("pwd", ""));
         transfer.web = web;
+        web.auth(mSettings.getString("login", ""), mSettings.getString("pwd", ""));
     }
 }
