@@ -1,12 +1,15 @@
 package com.komarnitskij.portaltohell;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,6 +37,7 @@ public class ScheduleFragment extends Fragment {
     ScheduleRecAdapter adapter;
     RecyclerView scheduleRecView;
     LinearLayoutManager llm;
+    GestureDetector gl;
 
     public static ScheduleFragment newInstance() {
         return new ScheduleFragment();
@@ -56,14 +60,27 @@ public class ScheduleFragment extends Fragment {
         return sMonth + "%2F" + sDay + "%2F" + now.get(Calendar.YEAR);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.schedule_fragment_layout, container, false);
+
+        gl = new GestureDetector(new GestureListener());
+        View.OnTouchListener swiper = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                gl.onTouchEvent(event);
+                return true;
+            }
+        };
+        root.setOnTouchListener(swiper);
 
         selectedDate = root.findViewById(R.id.text_selected_date);
         prev_day = root.findViewById(R.id.prev_day);
         next_day = root.findViewById(R.id.next_day);
         scheduleRecView = root.findViewById(R.id.scheduleRecView);
+
+//        scheduleRecView.setOnTouchListener(swiper);
 
         llm = new LinearLayoutManager(root.getContext());
         scheduleRecView.setLayoutManager(llm);
@@ -88,7 +105,6 @@ public class ScheduleFragment extends Fragment {
             }
         });
 
-        // TODO if not in database
         DataTransfer transfer = DataTransfer.getInstance();
         web = transfer.web;
         update_schedule();
@@ -142,5 +158,29 @@ public class ScheduleFragment extends Fragment {
                 }
             }
         }, getDate(now));
+    }
+
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        private static final int SWIPE_MIN_DISTANCE = 120;
+        private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                next_day.performClick();
+                return false; // справа налево
+            }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                prev_day.performClick();
+                return false; // слева направо
+            }
+
+            if(e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                return false; // снизу вверх
+            }  else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                return false; // сверху вниз
+            }
+            return false;
+        }
     }
 }
