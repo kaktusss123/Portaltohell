@@ -1,23 +1,17 @@
 package com.komarnitskij.portaltohell;
 
-class Pair {
-    String name, startTime, endTime, type, classroom, prepodName;
+import java.util.ArrayList;
 
-    Pair(String name, String startTime, String endTime, String type, String classroom, String prepodName) {
-        this.classroom = classroom;
+class Pair {
+    String name, startTime, endTime, type;
+    ArrayList<String> classrooms, prepodName;
+
+    Pair(String name, String startTime, String endTime, String type, ArrayList<String> classrooms, ArrayList<String> prepodName) {
+        this.classrooms = classrooms;
         this.endTime = endTime;
         this.name = name;
         this.prepodName = prepodName;
         this.startTime = startTime;
         this.type = type;
-    }
-
-    Pair(String name) {
-        this.name = name;
-        this.classroom = "";
-        this.endTime = "";
-        this.prepodName = "";
-        this.startTime = "";
-        this.type = "";
     }
 }

@@ -21,4 +21,9 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="pair_start_example">8:30</string>
+    <string name="pair_end_example">10:00</string>
+    <string name="pair_name_example">Безопасность жизнедеятельности</string>
+    <string name="pair_type_example">Лекция</string>
+    <string name="prepod_name_example">Буслаев Станислав Иванович</string>
 </resources>

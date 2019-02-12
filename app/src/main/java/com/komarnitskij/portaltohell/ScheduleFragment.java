@@ -10,11 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
@@ -106,26 +106,37 @@ public class ScheduleFragment extends Fragment {
                     scheduleRecView.setAdapter(adapter);
                     Document html = Jsoup.parse(response);
                     Elements disciplines = html.body().getElementsByClass("rowDisciplines");
-                    // TODO Сделал получение таблиц, вывести таблицы на экран + бд
+                    // TODO БД
                     System.out.println(disciplines.toString());
                     for (int i = 0; i < disciplines.size(); i++) {
+                        // Очень сложный парсинг, просто оставить как оно есть
                         String name = disciplines.get(i).getElementsByAttributeValue("data-field", "discipline").text();
                         String startTime = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(0).text();
                         String endTime = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(1).text();
                         String type = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(2).text();
-                        String classroom;
+
+                        // Собираю список из аудиторий
+                        ArrayList<String> classrooms = new ArrayList<>();
                         try {
-                             classroom = disciplines.get(i).getElementsByAttributeValue("data-field", "tutors").get(0).getElementsByTag("i").get(0).text().split(" ")[0];
-                        } catch (IndexOutOfBoundsException ex) {
-                            classroom = "";
-                        }
-                        String prepodName;
+                            Elements classroomsElems = disciplines.get(i).getElementsByAttributeValue("data-field", "tutors").get(0).getElementsByTag("i");
+                            for (Element el: classroomsElems) {
+                                // Обычно в первой части находится номер кабинета, хз что делать с фразами типа "Актовый зал"
+                                classrooms.add(el.text().split(" ")[0]);
+                            }
+                        // Если че, пропускаем
+                        } catch (IndexOutOfBoundsException ignored) {}
+
+                        // Та же хрень, но для преподов
+                        ArrayList<String> prepodName = new ArrayList<String>();
                         try {
-                            prepodName = disciplines.get(i).getElementsByTag("button").get(0).text();
-                        } catch (IndexOutOfBoundsException exc) {
-                            prepodName = "";
-                        }
-                        day.add(new Pair(name, startTime, endTime, type, classroom, prepodName));
+                            Elements prepods = disciplines.get(i).getElementsByTag("button");
+                            for (Element el: prepods) {
+                                prepodName.add(el.text());
+                            }
+                        } catch (IndexOutOfBoundsException ignored) {}
+
+                        // Ну и добавляю в адаптер
+                        day.add(new Pair(name, startTime, endTime, type, classrooms, prepodName));
                         adapter.notifyDataSetChanged();
                     }
                 }
