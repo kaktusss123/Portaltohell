@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ScheduleRecAdapter extends RecyclerView.Adapter<ScheduleRecAdapter.PairViewHolder> {
 
@@ -48,8 +49,12 @@ public class ScheduleRecAdapter extends RecyclerView.Adapter<ScheduleRecAdapter.
         v.endTime.setText(objects.get(position).endTime);
         v.name.setText(objects.get(position).name);
         v.type.setText(objects.get(position).type);
-        v.prepod.setText(objects.get(position).prepodName);
-        v.classroom.setText(objects.get(position).classroom);
+        if (!Objects.equals(objects.get(position).prepodName, ""))
+            v.prepod.setText(objects.get(position).prepodName);
+        else v.prepod.setVisibility(View.INVISIBLE);
+        if (!Objects.equals(objects.get(position).classroom, ""))
+            v.classroom.setText(objects.get(position).classroom);
+        else v.classroom.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -58,7 +63,7 @@ public class ScheduleRecAdapter extends RecyclerView.Adapter<ScheduleRecAdapter.
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView rv) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView rv) {
         super.onAttachedToRecyclerView(rv);
     }
 }

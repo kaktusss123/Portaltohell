@@ -113,8 +113,18 @@ public class ScheduleFragment extends Fragment {
                         String startTime = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(0).text();
                         String endTime = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(1).text();
                         String type = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(2).text();
-                        String classroom = "301";  //disciplines.get(i).getElementsByAttributeValue("data-field", "tutors").get(0).getElementsByTag("i").get(0).text();
-                        String prepodName = "Буслаев";  //disciplines.get(i).getElementsByTag("button").get(0).text();
+                        String classroom;
+                        try {
+                             classroom = disciplines.get(i).getElementsByAttributeValue("data-field", "tutors").get(0).getElementsByTag("i").get(0).text().split(" ")[0];
+                        } catch (IndexOutOfBoundsException ex) {
+                            classroom = "";
+                        }
+                        String prepodName;
+                        try {
+                            prepodName = disciplines.get(i).getElementsByTag("button").get(0).text();
+                        } catch (IndexOutOfBoundsException exc) {
+                            prepodName = "";
+                        }
                         day.add(new Pair(name, startTime, endTime, type, classroom, prepodName));
                         adapter.notifyDataSetChanged();
                     }
