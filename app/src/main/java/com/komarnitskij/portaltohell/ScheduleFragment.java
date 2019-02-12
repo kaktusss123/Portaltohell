@@ -4,12 +4,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -30,8 +31,9 @@ public class ScheduleFragment extends Fragment {
     Calendar now;
     WebInterface web;
     ArrayList<Pair> day;
-    ScheduleAdapter adapter;
-    ListView scheduleListView;
+    ScheduleRecAdapter adapter;
+    RecyclerView scheduleRecView;
+    LinearLayoutManager llm;
 
     public static ScheduleFragment newInstance() {
         return new ScheduleFragment();
@@ -61,7 +63,10 @@ public class ScheduleFragment extends Fragment {
         selectedDate = root.findViewById(R.id.text_selected_date);
         prev_day = root.findViewById(R.id.prev_day);
         next_day = root.findViewById(R.id.next_day);
-        scheduleListView = root.findViewById(R.id.scheduleListView);
+        scheduleRecView = root.findViewById(R.id.scheduleRecView);
+
+        llm = new LinearLayoutManager(root.getContext());
+        scheduleRecView.setLayoutManager(llm);
 
         now = Calendar.getInstance();
         selectedDate.setText(String.format("%s%s", String.valueOf(now.get(Calendar.DAY_OF_MONTH)), months[now.get(Calendar.MONTH)]));
@@ -97,8 +102,8 @@ public class ScheduleFragment extends Fragment {
             public void ScheduleRequest(String response, Context context) {
                 if (response != null) {
                     day = new ArrayList<>();
-                    adapter = new ScheduleAdapter(context, R.layout.schedule_row_layout, day);
-                    scheduleListView.setAdapter(adapter);
+                    adapter = new ScheduleRecAdapter(day);
+                    scheduleRecView.setAdapter(adapter);
                     Document html = Jsoup.parse(response);
                     Elements disciplines = html.body().getElementsByClass("rowDisciplines");
                     // TODO Сделал получение таблиц, вывести таблицы на экран + бд
