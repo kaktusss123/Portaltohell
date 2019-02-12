@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -38,6 +39,7 @@ public class ScheduleFragment extends Fragment {
     RecyclerView scheduleRecView;
     LinearLayoutManager llm;
     GestureDetector gl;
+    LinearLayout scheduleContainer;
 
     public static ScheduleFragment newInstance() {
         return new ScheduleFragment();
@@ -79,8 +81,9 @@ public class ScheduleFragment extends Fragment {
         prev_day = root.findViewById(R.id.prev_day);
         next_day = root.findViewById(R.id.next_day);
         scheduleRecView = root.findViewById(R.id.scheduleRecView);
+        scheduleContainer = root.findViewById(R.id.scheduleContainer);
 
-//        scheduleRecView.setOnTouchListener(swiper);
+        scheduleContainer.setOnTouchListener(swiper);
 
         llm = new LinearLayoutManager(root.getContext());
         scheduleRecView.setLayoutManager(llm);
