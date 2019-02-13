@@ -41,7 +41,7 @@
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="4dp"
+        android:layout_width="2dp"
         android:layout_height="0dp"
         android:layout_weight="0"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -76,10 +76,10 @@
             android:id="@+id/schedulePairType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="6dp"
             android:layout_marginEnd="12dp"
             android:text="@string/pair_type_example"
-            android:textSize="16sp"
+            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
