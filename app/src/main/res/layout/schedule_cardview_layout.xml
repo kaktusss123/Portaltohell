@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout3"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="0dp"
         android:layout_marginStart="2dp"
         android:orientation="vertical"
@@ -27,7 +27,7 @@
             android:gravity="clip_vertical|end"
             android:text="@string/pair_start_example"
             android:textColor="@android:color/black"
-            android:textSize="16sp" />
+            android:textSize="17sp" />
 
         <TextView
             android:id="@+id/schedulePairEnd"
@@ -61,14 +61,14 @@
 
         <TextView
             android:id="@+id/schedulePairName"
-            android:layout_width="wrap_content"
+            android:layout_width="238dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
             android:maxWidth="250dp"
             android:text="@string/pair_name_example"
             android:textColor="@android:color/black"
-            android:textSize="22sp"
+            android:textSize="17sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -77,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="9dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginEnd="12dp"
             android:text="@string/pair_type_example"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -87,8 +87,9 @@
             android:id="@+id/scheduleMainLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
