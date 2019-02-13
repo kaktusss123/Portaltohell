@@ -81,9 +81,6 @@ public class ScheduleFragment extends Fragment {
         prev_day = root.findViewById(R.id.prev_day);
         next_day = root.findViewById(R.id.next_day);
         scheduleRecView = root.findViewById(R.id.scheduleRecView);
-        scheduleContainer = root.findViewById(R.id.scheduleContainer);
-
-        scheduleContainer.setOnTouchListener(swiper);
 
         llm = new LinearLayoutManager(root.getContext());
         scheduleRecView.setLayoutManager(llm);

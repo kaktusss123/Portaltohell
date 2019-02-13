@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +21,12 @@ import java.util.ArrayList;
 
 public class NewsFragment extends Fragment {
 
-    ListView newsListView;
     WebInterface web;
     ArrayList<News> res;
     JSONArray arr;
-    NewsAdapter adapter;
+    NewsRecViewAdapter adapter;
+    RecyclerView newsRecView;
+    LinearLayoutManager llm;
 
 
     public static NewsFragment newInstance() {
@@ -39,16 +42,10 @@ public class NewsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.news_fragment_layout, container, false);
-        newsListView = root.findViewById(R.id.newsListView);
+        newsRecView = root.findViewById(R.id.newsRV);
 
-        newsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                News clicked = (News) parent.getItemAtPosition(position);
-                Intent openNewsInternetIntent = new Intent(Intent.ACTION_VIEW, clicked.url);
-                startActivity(openNewsInternetIntent);
-            }
-        });
+        llm = new LinearLayoutManager(root.getContext());
+        newsRecView.setLayoutManager(llm);
 
         final DataTransfer transfer = DataTransfer.getInstance();
         web = transfer.web;
@@ -60,8 +57,8 @@ public class NewsFragment extends Fragment {
                         try {
                             res = new ArrayList<>();
                             arr = new JSONArray(response);
-                            adapter = new NewsAdapter(context, R.layout.news_row_layout, res);
-                            newsListView.setAdapter(adapter);
+                            adapter = new NewsRecViewAdapter(res);
+                            newsRecView.setAdapter(adapter);
                             for (int i = 0; i < 10; i++) {
                                 JSONObject news = arr.getJSONObject(i);
                                 res.add(new News(news.getString("ImageUrl"),
@@ -78,7 +75,7 @@ public class NewsFragment extends Fragment {
 
             });
         } else {
-            newsListView.setAdapter(new NewsAdapter(this.getContext(), R.layout.news_row_layout, transfer.news));
+            newsRecView.setAdapter(new NewsRecViewAdapter(transfer.news));
         }
         return root;
     }
