@@ -2,6 +2,7 @@ package com.komarnitskij.portaltohell;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -47,6 +48,8 @@ public class NewsFragment extends Fragment {
         llm = new LinearLayoutManager(root.getContext());
         newsRecView.setLayoutManager(llm);
 
+
+
         final DataTransfer transfer = DataTransfer.getInstance();
         web = transfer.web;
         if (transfer.news == null) {
@@ -77,6 +80,14 @@ public class NewsFragment extends Fragment {
         } else {
             newsRecView.setAdapter(new NewsRecViewAdapter(transfer.news));
         }
+
+        newsRecView.addOnItemTouchListener(new RecyclerItemClickListener(root.getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                startActivity(new Intent(Intent.ACTION_VIEW, res.get(position).url));
+            }
+        }));
+
         return root;
     }
 }

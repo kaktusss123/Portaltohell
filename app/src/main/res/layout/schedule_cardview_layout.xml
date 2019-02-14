@@ -48,7 +48,8 @@
         app:layout_constraintEnd_toEndOf="@+id/linearLayout3"
         app:layout_constraintStart_toEndOf="@+id/linearLayout3"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/colorPrimary" />
+        app:srcCompat="@color/colorPrimary"
+        android:contentDescription="TODO" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/scheduleConstraint"

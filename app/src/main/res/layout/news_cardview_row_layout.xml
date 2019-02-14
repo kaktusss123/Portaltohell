@@ -31,7 +31,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/building" />
+                app:srcCompat="@drawable/building"
+                android:contentDescription="TODO" />
 
             <TextView
                 android:id="@+id/news_title_block"
