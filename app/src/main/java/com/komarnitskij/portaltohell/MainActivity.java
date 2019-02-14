@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     public WebInterface web;
@@ -76,9 +78,11 @@ public class MainActivity extends AppCompatActivity {
         // TODO сделать экран логина и авторизацию
 
         // Инициализация веб-интерфейса и трансфера данных
-        web = new WebInterface(this);
-        transfer = DataTransfer.getInstance();
-        transfer.web = web;
-        web.auth(mSettings.getString("login", ""), mSettings.getString("pwd", ""));
+        DataTransfer.getInstance().web = new WebInterface(this);
+        DataTransfer.getInstance().schedule = new ArrayList<>();
+        DataTransfer.getInstance().dates = new ArrayList<>();
+        DataTransfer.getInstance().web.auth(mSettings.getString("login", ""), mSettings.getString("pwd", ""));
+
+
     }
 }

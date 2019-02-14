@@ -108,7 +108,7 @@ class WebInterface {
                     System.out.println(disciplines.toString());
                     for (int i = 0; i < disciplines.size(); i++) {
                         scheduleOnDay.add(new ArrayList<String>());
-                        String name = disciplines.get(i).getElementsByAttributeValue("data-field", "discipline").text();
+                        String name = disciplines.get(i).getElementsByAttributeValue("date-field", "discipline").text();
                         System.out.println(name);
                     }
                 }

@@ -1,6 +1,5 @@
 package com.komarnitskij.portaltohell;
 
-import android.app.ActionBar;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
@@ -10,7 +9,8 @@ class DataTransfer {
 
     WebInterface web;
     ArrayList<News> news;
-    ActionBar actionBar;
+    ArrayList<Pair> schedule;
+    ArrayList<String> dates;
 
     static DataTransfer getInstance() {
         return ourInstance;

@@ -93,7 +93,7 @@ public class ScheduleFragment extends Fragment {
             public void onClick(View v) {
                 now.add(Calendar.DAY_OF_YEAR, -1);
                 selectedDate.setText(String.format("%s%s", String.valueOf(now.get(Calendar.DAY_OF_MONTH)), months[now.get(Calendar.MONTH)]));
-                update_schedule();
+                update_schedule(getDate(now));
             }
         });
         next_day.setOnClickListener(new View.OnClickListener() {
@@ -101,63 +101,73 @@ public class ScheduleFragment extends Fragment {
             public void onClick(View v) {
                 now.add(Calendar.DAY_OF_YEAR, 1);
                 selectedDate.setText(String.format("%s%s", String.valueOf(now.get(Calendar.DAY_OF_MONTH)), months[now.get(Calendar.MONTH)]));
-                update_schedule();
+                update_schedule(getDate(now));
             }
         });
 
         DataTransfer transfer = DataTransfer.getInstance();
         web = transfer.web;
-        update_schedule();
+        update_schedule(getDate(now));
 
         return root;
     }
 
-    void update_schedule() {
-        web.get_schedule(new ScheduleCallback() {
-            @Override
-            public void ScheduleRequest(String response, Context context) {
-                if (response != null) {
-                    day = new ArrayList<>();
-                    adapter = new ScheduleRecAdapter(day);
-                    scheduleRecView.setAdapter(adapter);
-                    Document html = Jsoup.parse(response);
-                    Elements disciplines = html.body().getElementsByClass("rowDisciplines");
-                    // TODO БД
-                    System.out.println(disciplines.toString());
-                    for (int i = 0; i < disciplines.size(); i++) {
-                        // Очень сложный парсинг, просто оставить как оно есть
-                        String name = disciplines.get(i).getElementsByAttributeValue("data-field", "discipline").text();
-                        String startTime = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(0).text();
-                        String endTime = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(1).text();
-                        String type = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(2).text();
+    void update_schedule(String date) {
+        day = new ArrayList<>();
+        adapter = new ScheduleRecAdapter(day);
+        scheduleRecView.setAdapter(adapter);
+        if (DataTransfer.getInstance().dates.contains(date)) {
+            for (Pair p : DataTransfer.getInstance().schedule)
+                if (p.date.equals(date))
+                    day.add(p);
+        } else
+            web.get_schedule(new ScheduleCallback() {
+                @Override
+                public void ScheduleRequest(String response, Context context) {
+                    if (response != null) {
+                        Document html = Jsoup.parse(response);
+                        Elements disciplines = html.body().getElementsByClass("rowDisciplines");
+                        System.out.println(disciplines.toString());
+                        for (int i = 0; i < disciplines.size(); i++) {
+                            // Очень сложный парсинг, просто оставить как оно есть
+                            String name = disciplines.get(i).getElementsByAttributeValue("data-field", "discipline").text();
+                            String startTime = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(0).text();
+                            String endTime = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(1).text();
+                            String type = disciplines.get(i).getElementsByAttributeValue("data-field", "datetime").get(0).getElementsByTag("div").get(2).text();
 
-                        // Собираю список из аудиторий
-                        ArrayList<String> classrooms = new ArrayList<>();
-                        try {
-                            Elements classroomsElems = disciplines.get(i).getElementsByAttributeValue("data-field", "tutors").get(0).getElementsByTag("i");
-                            for (Element el: classroomsElems) {
-                                // Обычно в первой части находится номер кабинета, хз что делать с фразами типа "Актовый зал"
-                                classrooms.add(el.text().split(" ")[0]);
+                            // Собираю список из аудиторий
+                            ArrayList<String> classrooms = new ArrayList<>();
+                            try {
+                                Elements classroomsElems = disciplines.get(i).getElementsByAttributeValue("data-field", "tutors").get(0).getElementsByTag("i");
+                                for (Element el : classroomsElems) {
+                                    // Обычно в первой части находится номер кабинета, хз что делать с фразами типа "Актовый зал"
+                                    classrooms.add(el.text().split(" ")[0]);
+                                }
+                                // Если че, пропускаем
+                            } catch (IndexOutOfBoundsException ignored) {
                             }
-                        // Если че, пропускаем
-                        } catch (IndexOutOfBoundsException ignored) {}
 
-                        // Та же хрень, но для преподов
-                        ArrayList<String> prepodName = new ArrayList<String>();
-                        try {
-                            Elements prepods = disciplines.get(i).getElementsByTag("button");
-                            for (Element el: prepods) {
-                                prepodName.add(el.text());
+                            // Та же хрень, но для преподов
+                            ArrayList<String> prepodName = new ArrayList<String>();
+                            try {
+                                Elements prepods = disciplines.get(i).getElementsByTag("button");
+                                for (Element el : prepods) {
+                                    prepodName.add(el.text());
+                                }
+                            } catch (IndexOutOfBoundsException ignored) {
                             }
-                        } catch (IndexOutOfBoundsException ignored) {}
 
-                        // Ну и добавляю в адаптер
-                        day.add(new Pair(name, startTime, endTime, type, classrooms, prepodName));
-                        adapter.notifyDataSetChanged();
+                            // Ну и добавляю в адаптер
+                            Pair today = new Pair(name, startTime, endTime, type, classrooms, prepodName, getDate(now));
+                            day.add(today);
+                            DataTransfer.getInstance().schedule.add(today);
+                            DataTransfer.getInstance().dates.add(getDate(now));
+                            adapter.notifyDataSetChanged();
+                        }
                     }
                 }
-            }
-        }, getDate(now));
+            }, getDate(now));
+        adapter.notifyDataSetChanged();
     }
 
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -167,17 +177,17 @@ public class ScheduleFragment extends Fragment {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+            if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                 next_day.performClick();
                 return false; // справа налево
-            }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+            } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                 prev_day.performClick();
                 return false; // слева направо
             }
 
-            if(e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+            if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                 return false; // снизу вверх
-            }  else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+            } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                 return false; // сверху вниз
             }
             return false;
