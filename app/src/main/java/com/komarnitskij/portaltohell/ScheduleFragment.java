@@ -16,6 +16,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.github.gfranks.collapsible.calendar.CollapsibleCalendarView;
+import com.github.gfranks.collapsible.calendar.model.CollapsibleState;
+import com.github.gfranks.collapsible.calendar.model.Formatter;
+import com.github.gfranks.collapsible.calendar.model.Month;
+
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.LocalDate;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,11 +30,9 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class ScheduleFragment extends Fragment {
-
-    TextView selectedDate;
-    Button prev_day, next_day;
 
     String[] months = {" января", " февраля", " марта", " апреля", " мая", " июня", " июля",
             " августа", " сентября", " октября", " ноября", " декабря"};
@@ -39,7 +44,8 @@ public class ScheduleFragment extends Fragment {
     RecyclerView scheduleRecView;
     LinearLayoutManager llm;
     GestureDetector gl;
-    LinearLayout scheduleContainer;
+    CollapsibleCalendarView calendarView;
+
 
     public static ScheduleFragment newInstance() {
         return new ScheduleFragment();
@@ -66,6 +72,7 @@ public class ScheduleFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.schedule_fragment_layout, container, false);
+        now = Calendar.getInstance();
 
         gl = new GestureDetector(new GestureListener());
         View.OnTouchListener swiper = new View.OnTouchListener() {
@@ -77,33 +84,46 @@ public class ScheduleFragment extends Fragment {
         };
         root.setOnTouchListener(swiper);
 
-        selectedDate = root.findViewById(R.id.text_selected_date);
-        prev_day = root.findViewById(R.id.prev_day);
-        next_day = root.findViewById(R.id.next_day);
         scheduleRecView = root.findViewById(R.id.scheduleRecView);
+        calendarView = root.findViewById(R.id.calendarView);
+//        calendarView.setFormatter(new Formatter() {
+//            @Override
+//            public String getDayName(LocalDate date) {
+//                return date.toString();
+//            }
+//
+//            @Override
+//            public String getHeaderText(int type, LocalDate from, LocalDate to) {
+//                Calendar now = Calendar.getInstance();
+//                return String.format("%s%s %s", now.get(Calendar.DAY_OF_MONTH), months[now.get(Calendar.MONTH)], now.get(Calendar.YEAR));
+//            }
+//        });
+        calendarView.setTitle(String.format("%s%s %s", now.get(Calendar.DAY_OF_MONTH), months[now.get(Calendar.MONTH)], now.get(Calendar.YEAR)));
+        calendarView.setMinDate(new LocalDate(2018, 1, 1));
+        calendarView.setListener(new CollapsibleCalendarView.Listener() {
+            @Override
+            public void onDateSelected(LocalDate date, List events) {
+                calendarView.setTitle(date.toString("d MMMM YYYY"));
+            }
+
+            @Override
+            public void onMonthChanged(LocalDate date) {
+                if (calendarView.getState() == CollapsibleState.MONTH && date.get(DateTimeFieldType.monthOfYear()) == now.get(Calendar.MONTH) + 1) {
+                    calendarView.selectDate(LocalDate.fromCalendarFields(now));
+                } else {
+                    calendarView.selectDate(date);
+                }
+            }
+
+            @Override
+            public void onHeaderClick() {
+                calendarView.toggle();
+            }
+        });
 
         llm = new LinearLayoutManager(root.getContext());
         scheduleRecView.setLayoutManager(llm);
 
-        now = Calendar.getInstance();
-        selectedDate.setText(String.format("%s%s", String.valueOf(now.get(Calendar.DAY_OF_MONTH)), months[now.get(Calendar.MONTH)]));
-
-        prev_day.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                now.add(Calendar.DAY_OF_YEAR, -1);
-                selectedDate.setText(String.format("%s%s", String.valueOf(now.get(Calendar.DAY_OF_MONTH)), months[now.get(Calendar.MONTH)]));
-                update_schedule(getDate(now));
-            }
-        });
-        next_day.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                now.add(Calendar.DAY_OF_YEAR, 1);
-                selectedDate.setText(String.format("%s%s", String.valueOf(now.get(Calendar.DAY_OF_MONTH)), months[now.get(Calendar.MONTH)]));
-                update_schedule(getDate(now));
-            }
-        });
 
         DataTransfer transfer = DataTransfer.getInstance();
         web = transfer.web;
@@ -178,10 +198,8 @@ public class ScheduleFragment extends Fragment {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                next_day.performClick();
                 return false; // справа налево
             } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                prev_day.performClick();
                 return false; // слева направо
             }
 

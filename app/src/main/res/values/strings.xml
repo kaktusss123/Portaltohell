@@ -14,4 +14,6 @@
     <string name="pair_name_example">Безопасность жизнедеятельности</string>
     <string name="pair_type_example">Лекция</string>
     <string name="prepod_name_example">Буслаев Станислав Иванович</string>
+    <string name="time_next">Next</string>
+    <string name="time_prev">Previous</string>
 </resources>
