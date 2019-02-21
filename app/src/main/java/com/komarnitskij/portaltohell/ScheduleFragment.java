@@ -12,17 +12,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.github.gfranks.collapsible.calendar.CollapsibleCalendarView;
-import com.github.gfranks.collapsible.calendar.model.CollapsibleState;
-import com.github.gfranks.collapsible.calendar.model.Formatter;
-import com.github.gfranks.collapsible.calendar.model.Month;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.CalendarMode;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.LocalDate;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,7 +25,6 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class ScheduleFragment extends Fragment {
 
@@ -44,7 +38,8 @@ public class ScheduleFragment extends Fragment {
     RecyclerView scheduleRecView;
     LinearLayoutManager llm;
     GestureDetector gl;
-    CollapsibleCalendarView calendarView;
+    MaterialCalendarView calendarView;
+    CalendarMode current;
 
 
     public static ScheduleFragment newInstance() {
@@ -86,38 +81,12 @@ public class ScheduleFragment extends Fragment {
 
         scheduleRecView = root.findViewById(R.id.scheduleRecView);
         calendarView = root.findViewById(R.id.calendarView);
-//        calendarView.setFormatter(new Formatter() {
-//            @Override
-//            public String getDayName(LocalDate date) {
-//                return date.toString();
-//            }
-//
-//            @Override
-//            public String getHeaderText(int type, LocalDate from, LocalDate to) {
-//                Calendar now = Calendar.getInstance();
-//                return String.format("%s%s %s", now.get(Calendar.DAY_OF_MONTH), months[now.get(Calendar.MONTH)], now.get(Calendar.YEAR));
-//            }
-//        });
-        calendarView.setTitle(String.format("%s%s %s", now.get(Calendar.DAY_OF_MONTH), months[now.get(Calendar.MONTH)], now.get(Calendar.YEAR)));
-        calendarView.setMinDate(new LocalDate(2018, 1, 1));
-        calendarView.setListener(new CollapsibleCalendarView.Listener() {
-            @Override
-            public void onDateSelected(LocalDate date, List events) {
-                calendarView.setTitle(date.toString("d MMMM YYYY"));
-            }
 
+        calendarView.setTopbarVisible(false);
+        calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
-            public void onMonthChanged(LocalDate date) {
-                if (calendarView.getState() == CollapsibleState.MONTH && date.get(DateTimeFieldType.monthOfYear()) == now.get(Calendar.MONTH) + 1) {
-                    calendarView.selectDate(LocalDate.fromCalendarFields(now));
-                } else {
-                    calendarView.selectDate(date);
-                }
-            }
-
-            @Override
-            public void onHeaderClick() {
-                calendarView.toggle();
+            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+                update_schedule(getDate(date.getCalendar()));
             }
         });
 
@@ -136,11 +105,11 @@ public class ScheduleFragment extends Fragment {
         day = new ArrayList<>();
         adapter = new ScheduleRecAdapter(day);
         scheduleRecView.setAdapter(adapter);
-        if (DataTransfer.getInstance().dates.contains(date)) {
-            for (Pair p : DataTransfer.getInstance().schedule)
-                if (p.date.equals(date))
-                    day.add(p);
-        } else
+//        if (DataTransfer.getInstance().dates.contains(date)) {
+//            for (Pair p : DataTransfer.getInstance().schedule)
+//                if (p.date.equals(date))
+//                    day.add(p);
+//        } else
             web.get_schedule(new ScheduleCallback() {
                 @Override
                 public void ScheduleRequest(String response, Context context) {

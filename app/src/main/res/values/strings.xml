@@ -16,4 +16,7 @@
     <string name="prepod_name_example">Буслаев Станислав Иванович</string>
     <string name="time_next">Next</string>
     <string name="time_prev">Previous</string>
+    <string name="previous">Go to previous</string>
+    <string name="next">Go to next</string>
+    <string name="calendar">Calendar</string>
 </resources>

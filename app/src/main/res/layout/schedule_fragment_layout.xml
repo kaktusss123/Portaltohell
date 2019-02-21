@@ -5,18 +5,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.github.gfranks.collapsible.calendar.CollapsibleCalendarView
+    <!--<com.github.gfranks.collapsible.calendar.CollapsibleCalendarView-->
+        <!--android:id="@+id/calendarView"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:ccv_allowStateChange="true"-->
+        <!--app:ccv_disableSwipe="false"-->
+        <!--app:ccv_state="week"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent">-->
+
+    <!--</com.github.gfranks.collapsible.calendar.CollapsibleCalendarView>-->
+
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:ccv_allowStateChange="true"
-        app:ccv_disableSwipe="false"
-        app:ccv_state="week"
+        android:background="@android:color/white"
+        android:nestedScrollingEnabled="true"
+        android:paddingBottom="-40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:mcv_allowClickDaysOutsideCurrentMonth="true"
+        app:mcv_calendarMode="week"
+        app:mcv_dateTextAppearance="@style/TextAppearance.AppCompat"
+        app:mcv_headerTextAppearance="@style/TextAppearance.MaterialCalendarWidget.Header"
+        app:mcv_selectionColor="@color/colorPrimary">
 
-    </com.github.gfranks.collapsible.calendar.CollapsibleCalendarView>
+    </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
 
     <LinearLayout
         android:id="@+id/scheduleContainer"
@@ -56,8 +74,7 @@
                 android:scrollbars="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+                app:layout_constraintStart_toStartOf="parent">
 
             </android.support.v7.widget.RecyclerView>
         </android.support.v7.widget.CardView>

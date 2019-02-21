@@ -84,7 +84,11 @@ public class NewsFragment extends Fragment {
         newsRecView.addOnItemTouchListener(new RecyclerItemClickListener(root.getContext(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                startActivity(new Intent(Intent.ACTION_VIEW, res.get(position).url));
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, res.get(position).url));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }));
 
