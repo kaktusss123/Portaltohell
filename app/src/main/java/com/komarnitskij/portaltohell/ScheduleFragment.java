@@ -155,7 +155,7 @@ public class ScheduleFragment extends Fragment {
                         }
                     }
                 }
-            }, getDate(now));
+            }, date);
         adapter.notifyDataSetChanged();
     }
 
