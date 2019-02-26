@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = ScheduleFragment.newInstance();
                     break;
                 case R.id.navigation_search:
-                    selectedFragment = MarksFragment.newInstance();
+                    selectedFragment = PagerMain.newInstance();
                     break;
                 case R.id.navigation_like:
                     selectedFragment = RestFragment.newInstance();

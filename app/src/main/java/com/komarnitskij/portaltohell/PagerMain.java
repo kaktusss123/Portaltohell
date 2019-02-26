@@ -2,18 +2,20 @@ package com.komarnitskij.portaltohell;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class PagerMain extends FragmentActivity {
+public class PagerMain extends Fragment {
 
     static final String TAG = "myLogs";
     static final int PAGE_COUNT = 365;
@@ -21,13 +23,21 @@ public class PagerMain extends FragmentActivity {
     ViewPager pager;
     PagerAdapter pagerAdapter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.pager_main);
+    public static PagerMain newInstance() {
+        return new PagerMain();
+    }
 
-        pager = findViewById(R.id.pager);
-        pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View root = inflater.inflate(R.layout.pager_main, container, false);
+
+        pager = root.findViewById(R.id.pager);
+        pagerAdapter = new MyFragmentPagerAdapter(getChildFragmentManager());
         pager.setAdapter(pagerAdapter);
 
         Calendar calendar = new GregorianCalendar();
@@ -49,6 +59,7 @@ public class PagerMain extends FragmentActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
+        return root;
     }
 
     private class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {
