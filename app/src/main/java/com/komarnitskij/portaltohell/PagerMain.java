@@ -18,6 +18,7 @@ import java.util.GregorianCalendar;
 public class PagerMain extends Fragment {
 
     static final String TAG = "myLogs";
+    // TODO разобраться с нумерацией!!! Иначе работать будет только до конца годв
     static final int PAGE_COUNT = 365;
 
     ViewPager pager;
