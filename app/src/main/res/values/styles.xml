@@ -8,9 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="CalendarTheme">
-        <item name="calendarViewStyle">@style/CalendarStyle</item>
-    </style>
+    <!--<style name="CalendarTheme">-->
+        <!--<item name="calendarViewStyle">@style/CalendarStyle</item>-->
+    <!--</style>-->
 
     <style name="CalendarStyle">
         <item name="android:orientation">vertical</item>
