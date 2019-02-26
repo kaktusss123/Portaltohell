@@ -1,6 +1,7 @@
 package com.komarnitskij.portaltohell;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -15,6 +16,11 @@ import android.view.ViewGroup;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.CalendarMode;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+
 public class PagerMain extends Fragment {
 
     static final String TAG = "myLogs";
@@ -23,6 +29,7 @@ public class PagerMain extends Fragment {
 
     ViewPager pager;
     PagerAdapter pagerAdapter;
+    MaterialCalendarView calendarView;
 
     public static PagerMain newInstance() {
         return new PagerMain();
@@ -58,6 +65,15 @@ public class PagerMain extends Fragment {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+            }
+        });
+        calendarView = root.findViewById(R.id.calendarView);
+
+        calendarView.setTopbarVisible(false);
+        calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
+            @Override
+            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+                pager.setCurrentItem(date.getCalendar().get(Calendar.DAY_OF_YEAR));
             }
         });
         return root;
