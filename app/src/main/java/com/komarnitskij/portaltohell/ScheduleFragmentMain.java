@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
-public class PagerMain extends Fragment {
+public class ScheduleFragmentMain extends Fragment {
 
     ViewPager pager;
     PagerAdapter pagerAdapter;
@@ -29,8 +28,8 @@ public class PagerMain extends Fragment {
     int current_year;
     boolean current_year_leap;
 
-    public static PagerMain newInstance() {
-        return new PagerMain();
+    public static ScheduleFragmentMain newInstance() {
+        return new ScheduleFragmentMain();
     }
 
     @Override
@@ -40,7 +39,7 @@ public class PagerMain extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.pager_main, container, false);
+        View root = inflater.inflate(R.layout.schedule_fragment_main_layout, container, false);
 
         pager = root.findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getChildFragmentManager());
@@ -56,12 +55,12 @@ public class PagerMain extends Fragment {
             public void onPageSelected(int position) {
                 if (position == 0) {
                     current_year--;
-                    current_year_leap = PageFragment.isLeapYear(current_year);
+                    current_year_leap = ScheduleFragment.isLeapYear(current_year);
                     pager.setCurrentItem(current_year_leap ? 366 : 365);
                 }
                 if (position == 366 + (current_year_leap ? 1 : 0)) {
                     current_year++;
-                    current_year_leap = PageFragment.isLeapYear(current_year);
+                    current_year_leap = ScheduleFragment.isLeapYear(current_year);
                     pager.setCurrentItem(1);
                 }
             }
@@ -95,7 +94,7 @@ public class PagerMain extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return PageFragment.newInstance(position, current_year, current_year_leap);
+            return ScheduleFragment.newInstance(position, current_year, current_year_leap);
         }
 
         @Override
