@@ -17,19 +17,17 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
-import com.prolificinteractive.materialcalendarview.CalendarMode;
+//import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 public class PagerMain extends Fragment {
 
-    static final String TAG = "myLogs";
-    // TODO разобраться с нумерацией!!! Иначе работать будет только до конца годв
-    static final int PAGE_COUNT = 365;
-
     ViewPager pager;
     PagerAdapter pagerAdapter;
     MaterialCalendarView calendarView;
+    int current_year;
+    boolean current_year_leap;
 
     public static PagerMain newInstance() {
         return new PagerMain();
@@ -41,7 +39,7 @@ public class PagerMain extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.pager_main, container, false);
 
         pager = root.findViewById(R.id.pager);
@@ -49,13 +47,23 @@ public class PagerMain extends Fragment {
         pager.setAdapter(pagerAdapter);
 
         Calendar calendar = new GregorianCalendar();
+        current_year = calendar.get(calendar.YEAR);
         pager.setCurrentItem(calendar.get(calendar.DAY_OF_YEAR));
 
         pager.addOnPageChangeListener(new OnPageChangeListener() {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d(TAG, "onPageSelected, position = " + position);
+                if (position == 0) {
+                    current_year--;
+                    current_year_leap = PageFragment.isLeapYear(current_year);
+                    pager.setCurrentItem(current_year_leap ? 366 : 365);
+                }
+                if (position == 366 + (current_year_leap ? 1 : 0)) {
+                    current_year++;
+                    current_year_leap = PageFragment.isLeapYear(current_year);
+                    pager.setCurrentItem(1);
+                }
             }
 
             @Override
@@ -81,16 +89,18 @@ public class PagerMain extends Fragment {
 
     private class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
-        public MyFragmentPagerAdapter(FragmentManager fm) { super(fm); }
+        public MyFragmentPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
         @Override
         public Fragment getItem(int position) {
-            return PageFragment.newInstance(position);
+            return PageFragment.newInstance(position, current_year, current_year_leap);
         }
 
         @Override
         public int getCount() {
-            return PAGE_COUNT;
+            return 368;
         }
 
     }
