@@ -24,6 +24,8 @@ public class PageFragment extends Fragment {
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
 
     int pageNumber;
+    int current_year;
+    boolean current_year_leap;
 
     Calendar now;
     WebInterface web;
@@ -32,10 +34,12 @@ public class PageFragment extends Fragment {
     RecyclerView scheduleRecView;
     LinearLayoutManager llm;
 
-    static PageFragment newInstance(int page) {
+    static PageFragment newInstance(int page, int current_year, boolean current_year_leap) {
         PageFragment pageFragment = new PageFragment();
         Bundle arguments = new Bundle();
         arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
+        arguments.putInt("year", current_year);
+        arguments.putBoolean("year_l", current_year_leap);
         pageFragment.setArguments(arguments);
         return pageFragment;
     }
@@ -44,15 +48,15 @@ public class PageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pageNumber = getArguments().getInt(ARGUMENT_PAGE_NUMBER);
-        System.out.println("Create "+pageNumber);
+        current_year = getArguments().getInt("year");
+        current_year_leap = getArguments().getBoolean("year_l");
+        System.out.println("Create " + pageNumber);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.pager_fragment, null);
-        System.out.println("CreateView "+pageNumber);
-
         now = Calendar.getInstance();
         scheduleRecView = root.findViewById(R.id.scheduleRecView);
         llm = new LinearLayoutManager(root.getContext());
@@ -60,23 +64,32 @@ public class PageFragment extends Fragment {
         DataTransfer transfer = DataTransfer.getInstance();
         web = transfer.web;
 
-        GregorianCalendar pageDate = getDateFromDayOfTheYear(pageNumber);
+        Calendar pageDate = getDateFromDayOfTheYear(pageNumber);
         TextView tvPage = root.findViewById(R.id.tvPage);
-        tvPage.setText("Page " + pageNumber + " Date " + pageDate.get(Calendar.DAY_OF_MONTH));
+        tvPage.setText("Page " + pageNumber + " Date " + pageDate.get(Calendar.DAY_OF_MONTH) + current_year);
 
         update_schedule(getDate(pageDate));
         return root;
     }
 
-    private GregorianCalendar getDateFromDayOfTheYear(int day){
-        int[] months = {31, 28, 31, 30, 31, 30, 31,31,30,31,30,31};
-        int month= 0;
+    private Calendar getDateFromDayOfTheYear(int day) {
+        int[] months = {31, current_year_leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        if (day > 365) {
+            day = 365;
+        }
+        int month = 0;
         while (day > months[month]) {
             day -= months[month];
             month += 1;
         }
-        GregorianCalendar date = new GregorianCalendar(2019, month, day);
+        Calendar date = new GregorianCalendar(current_year, month, day);
         return date;
+    }
+
+    public static boolean isLeapYear(int year) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        return cal.getActualMaximum(Calendar.DAY_OF_YEAR) > 365;
     }
 
     void update_schedule(String date) {
@@ -136,6 +149,7 @@ public class PageFragment extends Fragment {
         }, date);
         adapter.notifyDataSetChanged();
     }
+
     private String getDate(Calendar now) {
         int month = now.get(Calendar.MONTH) + 1;
         String sMonth;
