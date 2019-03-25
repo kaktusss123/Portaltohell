@@ -10,11 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.Toast;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
 
@@ -43,13 +38,13 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = GroupFragment.newInstance();
                     break;
                 case R.id.navigation_notifications:
-                    selectedFragment = ScheduleFragment.newInstance();
+                    selectedFragment = ScheduleFragmentMain.newInstance();
                     break;
                 case R.id.navigation_search:
-                    selectedFragment = MarksFragment.newInstance();
+                    selectedFragment = GroupFragment.newInstance();
                     break;
                 case R.id.navigation_like:
-                    selectedFragment = RestFragment.newInstance();
+                    selectedFragment = GroupFragment.newInstance();
                     break;
             }
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

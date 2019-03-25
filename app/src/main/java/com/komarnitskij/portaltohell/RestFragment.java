@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class RestFragment extends Fragment {
-    public static ScheduleFragment newInstance() {
-        return new ScheduleFragment();
+    public static ScheduleFragmentMain newInstance() {
+        return new ScheduleFragmentMain();
     }
 
     @Override
